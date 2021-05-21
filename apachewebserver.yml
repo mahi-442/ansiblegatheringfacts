@@ -1,0 +1,52 @@
+- hosts: all
+  become: True
+  tasks:
+          - name: install apache on linux
+            yum:
+                    name: httpd
+                    state: present
+
+            when: ansible_os_family=="RedHat"
+
+          - name: install apache on ubuntu
+            apt:
+                    name: apache2
+                    state: present
+            when: ansible_os_family=="Debian"
+
+          - name: start and enable apache for linux
+            service:
+                    name: httpd
+                    state: started
+                    enabled: yes
+            when: ansible_os_family=="RedHat"
+
+          - name: start and enable apache for ubuntu
+            service:
+                    name: apache2
+                    state: started
+                    enabled: yes
+            when: ansible_os_family=="Debian"
+
+          - name: copy source file to remote host
+            copy:
+                    src: index.html
+                    dest: /var/www/html/
+            notify:
+                    - restart apache for linux
+                    - restart apache for ubuntu
+  handlers:
+          - name: restart apache for linux
+            service:
+                    name: httpd
+                    state: restarted
+            when: ansible_os_family=="RedHat"
+
+          - name: restart apache for ubuntu
+            service:
+                    name: apache2
+                    state: restarted
+            when: ansible_os_family=="Debian"
+
+           
+
