@@ -1,0 +1,23 @@
+- hosts: all
+  become: true
+  tasks:
+          - name: create a group
+            group:
+                    name: ansible
+
+          - name: create users
+            user:
+                     name: "{{item.name}}"
+                     group: "{{item.group}}"
+            loop:
+                    - {name: ansiuser, group: ansible}
+                    - {name: ansiadmin, group: ansible}
+                    
+                    
+            
+                    
+                   
+            
+                   
+                    
+

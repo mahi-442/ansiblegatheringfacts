@@ -1,4 +1,7 @@
 - hosts: all
+  gather_facts: yes
+  serial:
+          - 5%
   become: True
   tasks:
           - name: install apache on linux
@@ -7,12 +10,16 @@
                     state: present
 
             when: ansible_os_family=="RedHat"
+            tags:
+                    - Linux
 
           - name: install apache on ubuntu
             apt:
                     name: apache2
                     state: present
             when: ansible_os_family=="Debian"
+            tags:
+                    - Ubuntu
 
           - name: start and enable apache for linux
             service:
@@ -20,6 +27,8 @@
                     state: started
                     enabled: yes
             when: ansible_os_family=="RedHat"
+            tags:
+                    - Linux
 
           - name: start and enable apache for ubuntu
             service:
@@ -27,11 +36,16 @@
                     state: started
                     enabled: yes
             when: ansible_os_family=="Debian"
+            tags:
+                    - Ubuntu
 
           - name: copy source file to remote host
             copy:
                     src: index.html
                     dest: /var/www/html/
+            tags:
+                    - Linux
+                    - Ubuntu 
             notify:
                     - restart apache for linux
                     - restart apache for ubuntu
